@@ -1,9 +1,14 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
-    kotlin("multiplatform") version "2.1.10"
+    kotlin("multiplatform") version "2.2.21"
+    signing
+    id("org.jetbrains.dokka") version "2.0.0"
+    id("com.vanniktech.maven.publish") version "0.31.0"
 }
 
 group = "nl.astraeus"
-version = "0.1.0-SNAPSHOT"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -16,45 +21,80 @@ repositories {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(11)
     jvm()
     js {
-        binaries.executable()
-        browser {
-            distribution {
-                outputDirectory.set(File("$projectDir/web/"))
-            }
-        }
+        binaries.library()
+        browser {}
     }
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("nl.astraeus:kotlin-simple-logging:1.1.1")
-                api("nl.astraeus:kotlin-css-generator:1.0.10")
             }
         }
-        val commonTest by getting
-        val jvmMain by getting {
+        val commonTest by getting {
             dependencies {
-                implementation("io.undertow:undertow-core:2.3.14.Final")
-                implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.11.0")
-
-                implementation("org.xerial:sqlite-jdbc:3.32.3.2")
-                implementation("com.zaxxer:HikariCP:4.0.3")
-                implementation("nl.astraeus:simple-jdbc-stats:1.6.1") {
-                    exclude(group = "org.slf4j", module = "slf4j-api")
-                }
+                implementation(kotlin("test"))
             }
         }
-        val jvmTest by getting {
-            dependencies {
-            }
-        }
-        val jsMain by getting {
-            dependencies {
-                implementation("nl.astraeus:kotlin-komponent:1.2.5")
-            }
-        }
+        val jvmTest by getting
         val jsTest by getting
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "gitea"
+            setUrl("https://gitea.astraeus.nl/api/packages/rnentjes/maven")
+
+            credentials {
+                val giteaUsername: String? by project
+                val giteaPassword: String? by project
+
+                username = giteaUsername
+                password = giteaPassword
+            }
+        }
+        mavenLocal()
+    }
+}
+
+tasks.withType<AbstractPublishToMaven> {
+    dependsOn(tasks.withType<Sign>())
+}
+
+signing {
+    sign(publishing.publications)
+}
+
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+
+    signAllPublications()
+
+    coordinates(group.toString(), name, version.toString())
+
+    pom {
+        name = "markdown-parser"
+        description = "Markdown parser"
+        inceptionYear = "2025"
+        url = "https://gitea.astraeus.nl/rnentjes/markdown-parser"
+        licenses {
+            license {
+                name = "MIT"
+                url = "https://gitea.astraeus.nl/rnentjes/markdown-parser"
+            }
+        }
+        developers {
+            developer {
+                id = "rnentjes"
+                name = "Rien Nentjes"
+                email = "info@nentjes.com"
+            }
+        }
+        scm {
+            url = "https://gitea.astraeus.nl/rnentjes/markdown-parser"
+        }
     }
 }

@@ -1,5 +1,21 @@
-plugins {
-  id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
+pluginManagement {
+  repositories {
+    google()
+    mavenCentral()
+    gradlePluginPortal()
+  }
 }
-val REPO_NAME = "dummy so the gitea template compiles, please remove"
+
+dependencyResolutionManagement {
+  repositories {
+    google()
+    mavenCentral()
+  }
+}
+
+plugins {
+  id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
+
 rootProject.name = "markdown-parser"
+

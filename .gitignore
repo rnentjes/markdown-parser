@@ -44,3 +44,4 @@ bin/
 ### .kotlin ###
 .kotlin
 kotlin-js-store
+gradle.properties
