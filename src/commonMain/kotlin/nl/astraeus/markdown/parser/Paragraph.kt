@@ -1,6 +1,6 @@
-package nl.astraeus.wiki.parser
+package nl.astraeus.markdown.parser
 
-import nl.astraeus.wiki.parser.MarkdownPart.ParagraphPart.*
+import nl.astraeus.markdown.parser.MarkdownPart.ParagraphPart.*
 
 private enum class ParType {
   TEXT,

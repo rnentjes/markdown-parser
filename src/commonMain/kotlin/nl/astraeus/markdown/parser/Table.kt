@@ -1,4 +1,4 @@
-package nl.astraeus.wiki.parser
+package nl.astraeus.markdown.parser
 
 fun parseTable(text: String): List<MarkdownPart> {
   val lines = text.lines().map { it.trim() }.filter { it.isNotEmpty() }

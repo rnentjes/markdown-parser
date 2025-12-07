@@ -1,7 +1,5 @@
 package nl.astraeus.markdown.parser
 
-import nl.astraeus.wiki.parser.MarkdownPart
-import nl.astraeus.wiki.parser.parseParagraph
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

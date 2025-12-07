@@ -1,7 +1,5 @@
 package nl.astraeus.markdown.parser
 
-import nl.astraeus.wiki.parser.MarkdownPart
-import nl.astraeus.wiki.parser.markdown
 import kotlin.test.Test
 
 class ParseTest {

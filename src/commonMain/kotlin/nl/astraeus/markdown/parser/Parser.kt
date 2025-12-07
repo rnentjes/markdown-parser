@@ -1,4 +1,4 @@
-package nl.astraeus.wiki.parser
+package nl.astraeus.markdown.parser
 
 enum class MarkdownType {
   CODE,
