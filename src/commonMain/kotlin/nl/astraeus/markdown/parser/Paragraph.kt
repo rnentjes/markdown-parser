@@ -115,7 +115,7 @@ private val states = listOf(
 )
 
 private fun String.test(index: Int, value: String): Boolean {
-  return this.length > index + value.length && this.substring(index, index + value.length) == value
+  return this.length >= index + value.length && this.substring(index, index + value.length) == value
 }
 
 fun parseParagraph(text: String): MarkdownPart.Paragraph {
