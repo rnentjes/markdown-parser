@@ -6,6 +6,37 @@ other changes should be required.
 
 See the [Markdown.kt](src/commonMain/kotlin/nl/astraeus/markdown/parser/Markdown.kt) class for the format of the output.
 
+## JVM & JS versions available on maven central
+
+    implementation("nl.astraeus:markdown-parser:1.0.4")
+
+## Usage
+
+```kotlin
+val markdown = markdown("# Markdown\n\nMy **markdown** text.")
+```
+
+This will give you a list of MarkdownPart elements:
+
+- MarkdownPart.Header(text="Markdown", size=1)
+- MarkdownPart.Paragraph(parts=
+    - Text("My ")
+    - Bold("markdown")
+    - Text(" text.\n")
+      )
+
+A paragraph can be parsed separately, e.g.
+
+```koltin
+val paragraph = parseParagraph("My **markdown** text.")
+```
+
+Which will produce a paragraph element with 3 parts:
+
+- Text("My ")
+- Bold("markdown")
+- Text(" text.\n")
+
 ## Mark down support
 
 ### Headers
@@ -64,12 +95,9 @@ You can create code blocks by indenting lines with two (or more) spaces or inlin
 
 Also code blocks are supported:
 
-```java
-// java code
-public class Example {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
+```kotlin
+fun main() {
+  val md = markdown("Markdown text")
 }
 ```
 

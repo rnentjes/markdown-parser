@@ -66,6 +66,15 @@ class ParseTest {
     printMarkdownParts(md)
   }
 
+  @Test
+  fun testHeading() {
+    val input = "# Markdown\n\nMy **markdown** text."
+
+    val md = markdown(input)
+
+    printMarkdownParts(md)
+  }
+
   private fun printMarkdownParts(md: List<MarkdownPart>) {
     for (part in md) {
       if (part is MarkdownPart.Paragraph) {
