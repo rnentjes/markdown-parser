@@ -67,6 +67,19 @@ class ParseTest {
   }
 
   @Test
+  fun testCheckboxListError() {
+    val input = """
+      Dit is een text
+      
+      - [ ] Not checked
+      - [x] Checked""".trimIndent()
+
+    val md = markdown(input)
+
+    printMarkdownParts(md)
+  }
+
+  @Test
   fun testHeading() {
     val input = "# Markdown\n\nMy **markdown** text."
 

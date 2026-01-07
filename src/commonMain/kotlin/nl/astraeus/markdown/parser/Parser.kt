@@ -182,7 +182,11 @@ fun markdown(text: String): List<MarkdownPart> {
     index++
   }
 
-  parseBuffer()
+  if (type == MarkdownType.CHECKBOX_LIST) {
+    parts.add(MarkdownPart.CheckboxList(checkboxList))
+  } else {
+    parseBuffer()
+  }
 
   return parts
 }

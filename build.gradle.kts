@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "nl.astraeus"
-version = "1.0.4"
+version = "1.0.5"
 
 repositories {
     mavenCentral()
@@ -28,10 +28,7 @@ kotlin {
         browser {}
     }
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-            }
-        }
+        val commonMain by getting
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
