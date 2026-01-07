@@ -4,6 +4,7 @@ import nl.astraeus.markdown.parser.MarkdownPart.ParagraphPart.*
 
 private enum class ParType {
   TEXT,
+  CODE,
   LINK_LABEL,
   LINK_URL,
   LINK_TITLE,
@@ -30,6 +31,14 @@ private data class ParState(
 )
 
 private val states = listOf(
+  // Inline Code
+  ParState(ParType.TEXT, "`", ParType.INLINE_CODE) { data ->
+    Text(data[ParType.TEXT]!!)
+  },
+  ParState(ParType.INLINE_CODE, "`", ParType.TEXT) { data ->
+    InlineCode(data[ParType.INLINE_CODE]!!)
+  },
+
   // Image with link
   ParState(ParType.TEXT, "[![", ParType.LINK_IMAGE_ALT) { data ->
     Text(data[ParType.TEXT]!!)
@@ -103,14 +112,7 @@ private val states = listOf(
     Text(data[ParType.TEXT]!!)
   },
   ParState(ParType.ITALIC, "*", ParType.TEXT) { data ->
-    BoldItalic(data[ParType.ITALIC]!!)
-  },
-
-  ParState(ParType.TEXT, "`", ParType.INLINE_CODE) { data ->
-    Text(data[ParType.TEXT]!!)
-  },
-  ParState(ParType.INLINE_CODE, "`", ParType.TEXT) { data ->
-    InlineCode(data[ParType.INLINE_CODE]!!)
+    Italic(data[ParType.ITALIC]!!)
   },
 )
 
@@ -125,9 +127,22 @@ fun parseParagraph(text: String): MarkdownPart.Paragraph {
   val data: ParagraphData = mutableMapOf()
   var index = 0
   var activeStates = states.filter { it.fromType == type }
+  var escaped = false
 
   while (index < text.length) {
     var found = false
+    val ch = text[index]
+    if (!escaped && ch == '\\') {
+      escaped = true
+      index++
+      continue
+    } else if (escaped) {
+      escaped = false
+      buffer.append(ch)
+      index++
+      continue
+    }
+
     for (state in activeStates) {
       if (state.fromType == type && text.test(index, state.text)) {
         data[state.fromType] = buffer.toString()

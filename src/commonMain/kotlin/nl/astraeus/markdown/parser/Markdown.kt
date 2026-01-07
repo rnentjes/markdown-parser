@@ -1,12 +1,18 @@
 package nl.astraeus.markdown.parser
 
+data class CheckboxItem(
+  val line: Int,
+  val checked: Boolean,
+  val text: String,
+)
+
 sealed class MarkdownPart {
 
   data object NewLine : MarkdownPart()
 
   data object PageBreak : MarkdownPart()
 
-  sealed class ParagraphPart() {
+  sealed class ParagraphPart {
     data class Text(
       val text: String
     ) : ParagraphPart()
@@ -44,6 +50,10 @@ sealed class MarkdownPart {
     class InlineCode(
       val text: String
     ) : ParagraphPart()
+
+    data class IndentedCode(
+      val code: String
+    ) : ParagraphPart()
   }
 
   data class Paragraph(
@@ -57,6 +67,10 @@ sealed class MarkdownPart {
 
   data class UnorderedList(
     val lines: List<String>,
+  ) : MarkdownPart()
+
+  data class CheckboxList(
+    val lines: List<CheckboxItem>,
   ) : MarkdownPart()
 
   data class OrderedList(

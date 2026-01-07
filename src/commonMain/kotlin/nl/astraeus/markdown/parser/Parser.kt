@@ -5,7 +5,9 @@ enum class MarkdownType {
   PARAGRAPH,
   ORDERED_LIST,
   UNORDERED_LIST,
+  CHECKBOX_LIST,
   TABLE,
+  INDENTED_CODE,
 }
 
 fun markdown(text: String): List<MarkdownPart> {
@@ -17,6 +19,7 @@ fun markdown(text: String): List<MarkdownPart> {
 
   var index = 0
   val buffer = StringBuilder()
+  val checkboxList = mutableListOf<CheckboxItem>()
 
   fun parseBuffer() {
     if (buffer.isNotBlank()) {
@@ -33,12 +36,28 @@ fun markdown(text: String): List<MarkdownPart> {
     //println("BUFFER [${buffer.length}] TYPE ${type} \t LINE - ${line}")
     when {
       type == MarkdownType.ORDERED_LIST -> {
-        if (!line.startsWith("${listIndex++}.")) {
+        if (!line.startsWith("${listIndex++}.") && !line.startsWith("-.")) {
           parseBuffer()
           continue
         } else {
           buffer.append(line.substring(2))
           buffer.append("\n")
+        }
+      }
+
+      type == MarkdownType.CHECKBOX_LIST -> {
+        if (!line.startsWith("- [ ]") && !line.startsWith("- [x]")) {
+          parts.add(MarkdownPart.CheckboxList(checkboxList))
+          parseBuffer()
+          continue
+        } else {
+          checkboxList.add(
+            CheckboxItem(
+              index,
+              line.startsWith("- [x]"),
+              line.substring(5).trim()
+            )
+          )
         }
       }
 
@@ -69,6 +88,16 @@ fun markdown(text: String): List<MarkdownPart> {
         parseBuffer()
       }
 
+      type == MarkdownType.INDENTED_CODE -> {
+        if (!rawLine.startsWith("  ")) {
+          parseBuffer()
+          continue
+        } else {
+          buffer.append(line)
+          buffer.append("\n")
+        }
+      }
+
       line.startsWith("```") -> {
         if (type != MarkdownType.CODE) {
           parseBuffer()
@@ -86,12 +115,24 @@ fun markdown(text: String): List<MarkdownPart> {
         continue
       }
 
-      line.startsWith("1.") -> {
+      line.startsWith("1.") || line.startsWith("-.") -> {
         parseBuffer()
         type = MarkdownType.ORDERED_LIST
         listIndex = 2
         buffer.append(line.substring(2))
         buffer.append("\n")
+      }
+
+      line.startsWith("- [ ]") || line.startsWith("- [x]") -> {
+        parseBuffer()
+        type = MarkdownType.CHECKBOX_LIST
+        checkboxList.add(
+          CheckboxItem(
+            index,
+            line.startsWith("- [x]"),
+            line.substring(5).trim()
+          )
+        )
       }
 
       line.startsWith("- ") || line.startsWith("* ") -> {
@@ -118,6 +159,13 @@ fun markdown(text: String): List<MarkdownPart> {
         val headerLevel = line.takeWhile { it == '#' }.length
         val headerText = line.substring(headerLevel).trim()
         parts.add(MarkdownPart.Header(headerText, headerLevel))
+      }
+
+      rawLine.startsWith("  ") -> {
+        parseBuffer()
+        type = MarkdownType.INDENTED_CODE
+        buffer.append(line)
+        buffer.append("\n")
       }
 
       line == "[break]" -> {
@@ -148,6 +196,10 @@ private fun handleBuffer(
     listOf(MarkdownPart.CodeBlock(text, language))
   }
 
+  MarkdownType.INDENTED_CODE -> {
+    listOf(MarkdownPart.CodeBlock(text, "block"))
+  }
+
   MarkdownType.PARAGRAPH -> {
     listOf(parseParagraph(text))
   }
@@ -158,6 +210,10 @@ private fun handleBuffer(
 
   MarkdownType.UNORDERED_LIST -> {
     listOf(MarkdownPart.UnorderedList(text.lines()))
+  }
+
+  MarkdownType.CHECKBOX_LIST -> {
+    error("Checkbox list is handled separately")
   }
 
   MarkdownType.TABLE -> {

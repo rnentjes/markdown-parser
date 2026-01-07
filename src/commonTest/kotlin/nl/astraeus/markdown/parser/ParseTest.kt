@@ -34,6 +34,38 @@ class ParseTest {
     printMarkdownParts(md)
   }
 
+  @Test
+  fun testIndentedCode() {
+    val input = """
+      Dit is een text
+      
+        Code block
+        Code block
+        
+      Meer text
+      """.trimIndent()
+
+    val md = markdown(input)
+
+    printMarkdownParts(md)
+  }
+
+  @Test
+  fun testCheckboxList() {
+    val input = """
+      Dit is een text
+      
+      - [ ] Not checked
+      - [x] Checked
+      
+      Meer text
+      """.trimIndent()
+
+    val md = markdown(input)
+
+    printMarkdownParts(md)
+  }
+
   private fun printMarkdownParts(md: List<MarkdownPart>) {
     for (part in md) {
       if (part is MarkdownPart.Paragraph) {
