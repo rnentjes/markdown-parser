@@ -16,6 +16,7 @@ fun markdown(text: String): List<MarkdownPart> {
   var language = ""
   var type = MarkdownType.PARAGRAPH
   var listIndex = 1
+  var checkboxLine = 0
 
   var index = 0
   val buffer = StringBuilder()
@@ -51,15 +52,16 @@ fun markdown(text: String): List<MarkdownPart> {
       type == MarkdownType.CHECKBOX_LIST -> {
         if (line.isBlank()) {
           if (buffer.isNotBlank()) {
-            addCheckbox(checkboxList, index, buffer)
+            addCheckbox(checkboxList, checkboxLine, buffer)
           }
           parts.add(MarkdownPart.CheckboxList(checkboxList))
           parseBuffer()
           continue
         } else if (line.startsWith("- [ ]") || line.startsWith("- [x]")) {
           if (buffer.isNotBlank()) {
-            addCheckbox(checkboxList, index, buffer)
+            addCheckbox(checkboxList, checkboxLine, buffer)
           }
+          checkboxLine = index
           buffer.append(line)
         } else {
           buffer.append(" ")
@@ -132,6 +134,7 @@ fun markdown(text: String): List<MarkdownPart> {
       line.startsWith("- [ ]") || line.startsWith("- [x]") -> {
         parseBuffer()
         type = MarkdownType.CHECKBOX_LIST
+        checkboxLine = index
         buffer.append(line)
       }
 
@@ -183,7 +186,7 @@ fun markdown(text: String): List<MarkdownPart> {
 
   if (type == MarkdownType.CHECKBOX_LIST) {
     if (buffer.isNotBlank()) {
-      addCheckbox(checkboxList, index, buffer)
+      addCheckbox(checkboxList, checkboxLine, buffer)
     }
     parts.add(MarkdownPart.CheckboxList(checkboxList))
   } else {
