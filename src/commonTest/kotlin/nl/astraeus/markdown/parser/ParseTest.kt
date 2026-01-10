@@ -51,12 +51,51 @@ class ParseTest {
   }
 
   @Test
+  fun testUnorderedList() {
+    val input = """
+      Dit is een text
+      
+      - First
+        More text
+      - Second
+        More text
+      
+      Another paragraph
+      """.trimIndent()
+
+    val md = markdown(input)
+
+    printMarkdownParts(md)
+  }
+
+  @Test
+  fun testOrderedList() {
+    val input = """
+      Dit is een text
+      
+      -. First
+        More text
+      -. Second
+        More text
+      
+      Another paragraph
+      """.trimIndent()
+
+    val md = markdown(input)
+
+    printMarkdownParts(md)
+  }
+
+  @Test
   fun testCheckboxList() {
     val input = """
       Dit is een text
       
-      - [ ] Not checked
-      - [x] Checked
+      - [ ] Not checked,
+            with some more text here
+      - [x] Checked!      
+      - [x] Checked,
+            text it!
       
       Meer text
       """.trimIndent()

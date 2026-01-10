@@ -36,40 +36,47 @@ fun markdown(text: String): List<MarkdownPart> {
     //println("BUFFER [${buffer.length}] TYPE ${type} \t LINE - ${line}")
     when {
       type == MarkdownType.ORDERED_LIST -> {
-        if (!line.startsWith("${listIndex++}.") && !line.startsWith("-.")) {
+        if (line.isBlank()) {
           parseBuffer()
           continue
-        } else {
-          buffer.append(line.substring(2))
+        } else if (line.startsWith("${listIndex++}.") || line.startsWith("-.")) {
           buffer.append("\n")
+          buffer.append(line.substring(2))
+        } else {
+          buffer.append(" ")
+          buffer.append(line)
         }
       }
 
       type == MarkdownType.CHECKBOX_LIST -> {
-        if (!line.startsWith("- [ ]") && !line.startsWith("- [x]")) {
+        if (line.isBlank()) {
+          if (buffer.isNotBlank()) {
+            addCheckbox(checkboxList, index, buffer)
+          }
           parts.add(MarkdownPart.CheckboxList(checkboxList))
           parseBuffer()
           continue
+        } else if (line.startsWith("- [ ]") || line.startsWith("- [x]")) {
+          if (buffer.isNotBlank()) {
+            addCheckbox(checkboxList, index, buffer)
+          }
+          buffer.append(line)
         } else {
-          checkboxList.add(
-            CheckboxItem(
-              index,
-              line.startsWith("- [x]"),
-              line.substring(5).trim()
-            )
-          )
+          buffer.append(" ")
+          buffer.append(line)
         }
       }
 
       type == MarkdownType.UNORDERED_LIST -> {
-        if (!line.startsWith("- ") &&
-          !line.startsWith("* ")
-        ) {
+        if (line.isBlank()) {
           parseBuffer()
           continue
-        } else {
-          buffer.append(line.substring(2))
+        } else if (line.startsWith("- ") || line.startsWith("* ")) {
           buffer.append("\n")
+          buffer.append(line.substring(2))
+        } else {
+          buffer.append(" ")
+          buffer.append(line)
         }
       }
 
@@ -120,26 +127,18 @@ fun markdown(text: String): List<MarkdownPart> {
         type = MarkdownType.ORDERED_LIST
         listIndex = 2
         buffer.append(line.substring(2))
-        buffer.append("\n")
       }
 
       line.startsWith("- [ ]") || line.startsWith("- [x]") -> {
         parseBuffer()
         type = MarkdownType.CHECKBOX_LIST
-        checkboxList.add(
-          CheckboxItem(
-            index,
-            line.startsWith("- [x]"),
-            line.substring(5).trim()
-          )
-        )
+        buffer.append(line)
       }
 
       line.startsWith("- ") || line.startsWith("* ") -> {
         parseBuffer()
         type = MarkdownType.UNORDERED_LIST
         buffer.append(line.substring(2))
-        buffer.append("\n")
       }
 
       line.startsWith("|") -> {
@@ -189,6 +188,25 @@ fun markdown(text: String): List<MarkdownPart> {
   }
 
   return parts
+}
+
+private fun addCheckbox(
+  checkboxList: MutableList<CheckboxItem>,
+  index: Int,
+  buffer: StringBuilder
+) {
+  if (buffer.length >= 5) {
+    checkboxList.add(
+      CheckboxItem(
+        index,
+        buffer.startsWith("- [x]"),
+        buffer.substring(5).trim()
+      )
+    )
+  } else {
+    println("Invalid checkbox format: $buffer")
+  }
+  buffer.clear()
 }
 
 private fun handleBuffer(
