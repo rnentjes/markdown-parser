@@ -69,6 +69,24 @@ class ParseTest {
   }
 
   @Test
+  fun testUnorderedListAlternative() {
+    val input = """
+      Dit is een text
+      
+      * First
+        More text
+      * Second
+        More text
+      
+      Another paragraph
+      """.trimIndent()
+
+    val md = markdown(input)
+
+    printMarkdownParts(md)
+  }
+
+  @Test
   fun testOrderedList() {
     val input = """
       Dit is een text
@@ -76,6 +94,24 @@ class ParseTest {
       -. First
         More text
       -. Second
+        More text
+      
+      Another paragraph
+      """.trimIndent()
+
+    val md = markdown(input)
+
+    printMarkdownParts(md)
+  }
+
+  @Test
+  fun testOrderedListAlternative() {
+    val input = """
+      Dit is een text
+      
+      #.First
+        More text
+      #.Second
         More text
       
       Another paragraph

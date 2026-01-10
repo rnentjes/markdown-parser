@@ -40,7 +40,11 @@ fun markdown(text: String): List<MarkdownPart> {
         if (line.isBlank()) {
           parseBuffer()
           continue
-        } else if (line.startsWith("${listIndex++}.") || line.startsWith("-.")) {
+        } else if (
+          line.startsWith("${listIndex++}.")
+          || line.startsWith("-.")
+          || line.startsWith("#.")
+        ) {
           buffer.append("\n")
           buffer.append(line.substring(2))
         } else {
@@ -124,7 +128,7 @@ fun markdown(text: String): List<MarkdownPart> {
         continue
       }
 
-      line.startsWith("1.") || line.startsWith("-.") -> {
+      line.startsWith("1.") || line.startsWith("-.") || line.startsWith("#.") -> {
         parseBuffer()
         type = MarkdownType.ORDERED_LIST
         listIndex = 2
