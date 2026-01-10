@@ -106,6 +106,22 @@ class ParseTest {
   }
 
   @Test
+  fun testCheckboxList2() {
+    val input = """
+          # Todo
+        
+          - [ ] Handle multi line lists correctly;
+                as long as there is no empty line the text is appended to last item in the list
+          - [x] Autolinks, text between < >  will be parsed as a generic link. It's up
+                to the using application what to do with it.""".trimIndent()
+
+    val md = markdown(input)
+
+    printMarkdownParts(md)
+  }
+
+
+  @Test
   fun testCheckboxListError() {
     val input = """
       Dit is een text
