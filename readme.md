@@ -1,4 +1,4 @@
-# Markdown parser in kotlin multiplatfom common
+# Markdown parser in kotlin multiplatform common
 
 A basic markdown parser in kotlin multiplatform common. It can be used on any platform supported by kotlin.
 By default only javascript en the jvm are configured. Fork the repository and add any platform you need, no
@@ -8,7 +8,7 @@ See the [Markdown.kt](src/commonMain/kotlin/nl/astraeus/markdown/parser/Markdown
 
 ## JVM & JS versions available on maven central
 
-    implementation("nl.astraeus:markdown-parser:1.0.4")
+    implementation("nl.astraeus:markdown-parser:1.0.9")
 
 ## Usage
 
@@ -81,6 +81,12 @@ Text can be formatted with **bold**, *italic*, ***bold and italic***, ~~striketh
 3. Item 3
 
 ### Ordered list alternate syntax
+
+#. Item 1
+#. Item 2
+#. Item 3
+
+### Or
 
 -. Item 1
 -. Item 2
